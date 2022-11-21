@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.secret_key = "123456"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:123456@localhost:5432/diseases"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://lordofcats:Af43d9!9uWpJazJ@lordofcats.mysql.pythonanywhere-services.com/lordofcats$diseases"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -128,8 +128,12 @@ class Record(db.Model):
         self.total_patients = total_patients
 
 @app.route('/')
-def Index():
+def index():
     return render_template("index.html")
+
+@app.route('/about')
+def about():
+    return render_template("about.html")
 
 
 ########################## DISEASE TYPES ##########################
