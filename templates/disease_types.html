@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% include 'header.html' %}
+
+
+{% block title %} HHH {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col md-12">
+        <div class="jumbotron jumbotron-fluid p-3">
+            <h2><b>Disease types</b> <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal">Add new disease type</button></h2>
+            
+            {% with messages = get_flashed_messages() %}   
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true"><i class="bi bi-x"></i></span>
+                </button>
+                {{message}}
+            </div>        
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <table class="table table-hover table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th class="col-sm-2">Action</th>
+                </tr>
+
+                {% for row in diseasetypes %}
+                <tr>
+                    <td>{{row.id}}</td>
+                    <td>{{row.description}}</td>
+                    <td>
+                        <a href="/disease_types/update/{{row.id}}" class="btn btn-outline-primary" data-toggle="modal" data-target="#modaledit{{row.id}}">Edit <i class="bi bi-pencil-square"></i></a>
+                        <!-- <a href="/disease_types/delete/{{row.id}}" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure to delete?')">Delete</a> -->
+                    </td>
+                </tr>
+  
+                <div id="modaledit{{row.id}}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Update disease type</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/disease_types/update" method="POST">
+                                <div class="form-group">
+                                    <label class="col-form-label">ID:</label>
+                                    <input type="text" class="form-control" name="id" required="1" value="{{row.id}}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Description:</label>
+                                    <input type="text" class="form-control" name="description" required="1" value="{{row.description}}">
+                                </div>
+                                <hr>
+                                <div class="form-group float-right">
+                                    <button class="btn btn-primary" type="submit">Add</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </table>
+        </div>
+        <div id="mymodal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h4 class="modal-title">Add disease type</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/disease_types/insert" method="POST">
+                        <div class="form-group">
+                            <label>ID:</label>
+                            <input type="text" class="form-control" name="id" required="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <input type="text" class="form-control" name="description" required="1">
+                        </div>
+                        <hr>
+                        <div class="form-group float-right">
+                            <button class="btn btn-primary" type="submit">Add</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+{% endblock %}

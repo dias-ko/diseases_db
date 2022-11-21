@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% include 'header.html' %}
+
+
+{% block title %} Diseases {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col md-12">
+        <div class="jumbotron jumbotron-fluid p-3">
+            <h2><b>Diseases</b> <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#modaladd">Add disease</button></h2>
+            
+            {% with messages = get_flashed_messages() %}   
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true"><i class="bi bi-x"></i></span>
+                </button>
+                {{message}}
+            </div>        
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <table class="table table-hover table-dark">
+                <tr>
+                    <th class="col-sm-2">Disease code</th>
+                    <th class="col-sm-2">Pathogen</th>
+                    <th class="col-sm-3">Description</th>
+                    <th class="col-sm-2">Type</th>
+                    <th class="col-sm-3">Action</th>
+                </tr>
+
+                {% for row in diseases %}
+                <tr>
+                    <td>{{row.disease_code}}</td>
+                    <td>{{row.pathogen}}</td>
+                    <td>{{row.description}}</td>
+                    <td>{{row.type}}</td>
+                    <td>
+                        <a href="/diseases/update/{{row.disease_code}}" class="btn btn-outline-primary" data-toggle="modal" data-target="#modaledit{{row.disease_code}}">Edit <i class="bi bi-pencil-square"></i></a>
+                        <span class="mx-1"></span>
+                        <a href="/diseases/delete/{{row.disease_code}}" class="btn btn-outline-danger" onclick="return confirm('Are you sure to delete?')">Delete <i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+  
+                <div id="modaledit{{row.disease_code}}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Update disease</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/diseases/update" method="POST">
+                                <div class="form-group">
+                                    <label class="col-form-label">Disease code:</label>
+                                    <input type="text" class="form-control" name="disease_code" required="1" value="{{row.disease_code}}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Pathogen:</label>
+                                    <input type="text" class="form-control" name="pathogen" required="1" value="{{row.pathogen}}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Description:</label>
+                                    <input type="text" class="form-control" name="description" required="1" value="{{row.description}}">
+                                </div>
+                                <div class="form-group">                                    
+                                    <label class="col-form-label">Type:</label>
+                                    <select type="form-control" class="form-control" name="type" required="1">
+                                        <option>{{row.type}}</option>
+                                        {% for row_t in diseasetypes %}
+                                        {% if row_t.description != row.type %}
+                                        <option>{{row_t.description}}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <hr>
+                                <div class="form-group float-right">
+                                    <button class="btn btn-primary" type="submit">Update</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>              
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </table>
+        </div>
+        <div id="modaladd" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h4 class="modal-title">Add disease</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/diseases/insert" method="POST">
+                        <div class="form-group">
+                            <label class="col-form-label">Disease code:</label>
+                            <input type="text" class="form-control" name="disease_code" required="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Pathogen:</label>
+                            <input type="text" class="form-control" name="pathogen" required="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Description:</label>
+                            <input type="text" class="form-control" name="description" required="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Type:</label>
+                            <select type="form-control" class="form-control" name="type" required="1">
+                                {% for row in diseasetypes %}
+                                <option>{{row.description}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group float-right">
+                            <button class="btn btn-primary" type="submit">Add</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>              
+                </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+{% endblock %}

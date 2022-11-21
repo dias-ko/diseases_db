@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% include 'header.html' %}
+
+
+{% block title %} Records {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col md-12">
+        <div class="jumbotron jumbotron-fluid p-3">
+            <h2><b>Records</b> <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#modaladd">Add <i class="bi bi-plus-square"></i></button></h2>
+            
+            {% with messages = get_flashed_messages() %}   
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true"><i class="bi bi-x"></i></span>
+                </button>
+                {{message}}
+            </div>        
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <table class="table table-hover table-dark">
+                <tr>
+                    <th class="col-sm-3">Public Servant</th>
+                    <th class="col-sm-3">Country</th>
+                    <th class="col-sm-1">Disease</th>
+                    <th class="col-sm-1">Total deaths</th>
+                    <th class="col-sm-1">Total patients</th>
+                    <th class="col-sm-3">Action</th>
+                </tr>
+
+                {% for row in records %}
+                <tr>
+                    <td>{{row.email}}</td>
+                    <td>{{row.cname}}</td>
+                    <td>{{row.disease_code}}</td>
+                    <td>{{row.total_deaths}}</td>
+                    <td>{{row.total_patients}}</td>
+                    <td>
+                        <a href="/records/update?e={{row.email}}&c={{row.cname}}&d={{row.disease_code}}" class="btn btn-outline-primary" data-toggle="modal" data-target="#modaledit{{ row.email|replace('@','')|replace('.','') }}{{row.cname}}{{row.disease_code}}">Edit <i class="bi bi-pencil-square"></i></a>
+                        <span class="mx-1"></span>
+                        <a href="/records/delete?e={{row.email}}&c={{row.cname}}&d={{row.disease_code}}" class="btn btn-outline-danger" onclick="return confirm('Are you sure to delete?')">Delete <i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+  
+                <div id="modaledit{{ row.email|replace('@','')|replace('.','') }}{{row.cname}}{{row.disease_code}}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Update record</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/records/update?e={{row.email}}&c={{row.cname}}&d={{row.disease_code}}" method="POST">
+                                    <div class="form-group">
+                                        <label class="col-form-label">public Servant:</label>
+                                        <input type="text" class="form-control" name="email" required="1" value="{{row.email}}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Country:</label>
+                                        <input type="text" class="form-control" name="cname" required="1" value="{{row.cname}}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Disease:</label>
+                                        <input type="text" class="form-control" name="disease_code" required="1" value="{{row.disease_code}}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Total deaths:</label>
+                                        <input type="number" class="form-control" name="total_deaths" required="1" value="{{row.total_deaths}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Total patients:</label>
+                                        <input type="number" class="form-control" name="total_patients" required="1" value="{{row.total_patients}}">
+                                    </div>
+                                    <hr>
+                                    <div class="form-group float-right">
+                                        <button class="btn btn-primary" type="submit">Update</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% endfor %}
+
+            </table>
+        </div>
+        <div id="modaladd" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h4 class="modal-title">Add record</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/records/insert" method="POST">
+                            <div class="form-group">
+                                <label class="col-form-label">Public Servant:</label>
+                                <select type="form-control" class="form-control" name="email" required="1">
+                                    {% for row in publicservants %}
+                                    <option>{{row.email}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Country:</label>
+                                <select type="form-control" class="form-control" name="cname" required="1">
+                                    {% for row in countries %}
+                                    <option>{{row.cname}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Disease:</label>
+                                <select type="form-control" class="form-control" name="disease_code" required="1">
+                                    {% for row in diseases %}
+                                    <option>{{row.disease_code}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Total deaths:</label>
+                                <input type="number" class="form-control" name="total_deaths" required="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Total patients:</label>
+                                <input type="number" class="form-control" name="total_patients" required="1">
+                            </div>
+                            <hr>
+                            <div class="form-group float-right">
+                                <button class="btn btn-primary" type="submit">Add</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>              
+                    </div>
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>
+{% endblock %}

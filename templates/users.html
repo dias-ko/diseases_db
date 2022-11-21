@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% include 'header.html' %}
+
+
+{% block title %} Users {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col md-12">
+        <div class="jumbotron jumbotron-fluid p-3">
+            <h2><b>Users</b> <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#modaladd">Add <i class="bi bi-plus-square"></i></button></h2>
+            
+            {% with messages = get_flashed_messages() %}   
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true"><i class="bi bi-x"></i></span>
+                </button>
+                {{message}}
+            </div>        
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <table class="table table-hover table-dark">
+                <tr>
+                    <th class="col-sm-2">Email</th>
+                    <th class="col-sm-1">Name</th>
+                    <th class="col-sm-1">Surname</th>
+                    <th class="col-sm-1">Salary</th>
+                    <th class="col-sm-2">Phone</th>
+                    <th class="col-sm-2">Country</th>
+                    <th class="col-sm-3">Action</th>
+                </tr>
+
+                {% for row in users %}
+                <tr>
+                    <td>{{row.email}}</td>
+                    <td>{{row.name}}</td>
+                    <td>{{row.surname}}</td>
+                    <td>{{row.salary}}</td>
+                    <td>{{row.phone}}</td>
+                    <td>{{row.cname}}</td>
+                    <td>
+                        <a href="/users/update/{{row.email}}" class="btn btn-outline-primary" data-toggle="modal" data-target="#modaledit{{ row.email|replace('@','')|replace('.','') }}">Edit <i class="bi bi-pencil-square"></i></a>
+                        <span class="mx-1"></span>
+                        <a href="/users/delete/{{row.email}}" class="btn btn-outline-danger" onclick="return confirm('Are you sure to delete?')">Delete <i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+  
+                <div id="modaledit{{ row.email|replace('@','')|replace('.','') }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Update user</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/users/update" method="POST">
+                                    <div class="form-group">
+                                        <label class="col-form-label">Email:</label>
+                                        <input type="email" class="form-control" name="email" required="1" value="{{row.email}}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Name:</label>
+                                        <input type="text" class="form-control" name="name" required="1" value="{{row.name}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Surname:</label>
+                                        <input type="text" class="form-control" name="surname" required="1" value="{{row.surname}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Salary:</label>
+                                        <input type="number" class="form-control" name="salary" required="1" value="{{row.salary}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Phone:</label>
+                                        <input type="tel" class="form-control" name="phone" required="0" value="{{row.phone}}">
+                                    </div>
+                                    <div class="form-group">                                    
+                                        <label class="col-form-label">Country:</label>
+                                        <select type="form-control" class="form-control" name="cname" required="1">
+                                            <option>{{row.cname}}</option>
+                                            {% for row_t in countries %}
+                                            {% if row_t.cname != row.cname %}
+                                            <option>{{row_t.cname}}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <hr>
+                                    <div class="form-group float-right">
+                                        <button class="btn btn-primary" type="submit">Update</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </form>              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% endfor %}
+
+            </table>
+        </div>
+        <div id="modaladd" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h4 class="modal-title">Add user</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/users/insert" method="POST">
+                            <div class="form-group">
+                                <label class="col-form-label">Email:</label>
+                                <input type="email" class="form-control" name="email" required="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Name:</label>
+                                <input type="text" class="form-control" name="name" required="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Surname:</label>
+                                <input type="text" class="form-control" name="surname" required="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Salary:</label>
+                                <input type="number" class="form-control" name="salary" required="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Phone:</label>
+                                <input type="text" class="form-control" name="phone" required="0">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Country:</label>
+                                <select type="form-control" class="form-control" name="cname" required="1">
+                                    {% for row in countries %}
+                                    <option>{{row.cname}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <hr>
+                            <div class="form-group float-right">
+                                <button class="btn btn-primary" type="submit">Add</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>              
+                    </div>
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>
+{% endblock %}
